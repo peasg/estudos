@@ -12,7 +12,7 @@ float train[][3] = {
 
 float sigmoidf(float x){
 	
-	return 1.0f/(1.0f + exp(-x));
+	return 1.0f/(1.0f + expf(-x));
 
 }
 
@@ -43,23 +43,24 @@ float costf(float w1,float w2, float b){
 
 int main(void) {
 
-    srand(12);
-    float eps= 1e-3;
-    float rate = 1e-4;
-    float w1 = rand_float()*10.0f;
-    float b = rand_float()*10.0f;
-	float w2 = rand_float()*10.0f;
-	float c = costf(w1,w2,b);
+    srand(42);
+    float eps  = 1e-3;
+    float rate = 1e-3;
 
-    for (size_t i = 0; i < 10000; ++i){
+    float w1 = rand_float();
+    float b  = rand_float();
+	float w2 = rand_float();
+	float c  = costf(w1,w2,b);
+
+    for (size_t i = 0; i < 100*1000; ++i){
 
         float dw1 = (costf(w1 + eps,w2,b) - c)/eps;
 		float dw2 = (costf(w1,w2+eps,b) - c)/eps;
-        float db = (costf(w1,w2, b + eps) - c)/eps;
+        float db  = (costf(w1,w2, b + eps) - c)/eps;
 
         w1 -= dw1*rate;
 		w2 -= dw2*rate;
-        b -= db*rate;
+        b  -= db*rate;
 
 		//printf("avg cost: %f\n", costf(w1,w2,b));
     };
@@ -68,12 +69,17 @@ int main(void) {
 
         float x1 = train[i][0];
 		float x2 = train[i][1];
-        float y = sigmoidf(x1*w1 + x2*w2 + b) ;
+        float y  = sigmoidf(x1*w1 + x2*w2 + b) ;
         float deltaf = (train[i][2]-y)/(train[i][2]);
 
-        printf("Learned value: %f, expected value: %f,discrepancy:%f\n", y,train[i][2], deltaf);
-    };
 
-return 0;
+        printf("Learned value: %f, Expected value: %f,Discrepancy:%f\n", y,train[i][2], deltaf);
+	};
+
+	printf("--------Parameters--------\n");
+	printf("w1 = %f , w2 = %f , b = %f\n", w1,w2,b);
+	printf("With cost: %f\n", costf(w1,w2,b));
+	
+	return 0;
 
 }
